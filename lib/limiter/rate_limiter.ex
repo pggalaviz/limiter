@@ -16,11 +16,11 @@ defmodule Limiter.RateLimiter do
   end
 
   def log(ip) do
-    case Horde.Registry.whereis_name({Limiter.GlobalRegistry, __MODULE__}) do
+    case Horde.Registry.lookup(Limiter.GlobalRegistry, __MODULE__) do
       :undefined ->
         {:error, :not_found}
 
-      pid ->
+      [{pid, _value}] ->
         node = Kernel.node(pid)
         :rpc.call(node, __MODULE__, :get_log, [ip])
     end
